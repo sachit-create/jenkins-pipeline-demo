@@ -14,7 +14,7 @@ jobs:
         working-directory: frontend
 
     steps:
-      # 1️⃣ Checkout source code
+      # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -28,11 +28,17 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # 4️⃣ Build React app
+      # 4️⃣ Build frontend
       - name: Build frontend
         run: npm run build
 
-      # 5️⃣ Configure AWS credentials
+      # 5️⃣ Install AWS CLI (THIS FIXES exit code 127)
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+
+      # 6️⃣ Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -40,6 +46,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      # 6️⃣ Deploy build to S3
+      # 7️⃣ Deploy to S3
       - name: Deploy to S3
         run: aws s3 sync build/ s3://${{ secrets.S3_BUCKET }} --delete
