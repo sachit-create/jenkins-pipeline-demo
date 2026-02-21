@@ -1,22 +1,79 @@
 pipeline {
     agent any
 
+    environment {
+        EC2_HOST = '13.201.1.179'
+        PROJECT_ROOT = '/home/ubuntu/foodapp'
+        BACKEND_DIR = '/home/ubuntu/foodapp/backend'
+
+        AWS_DEFAULT_REGION = 'ap-south-1'
+        S3_BUCKET = 'sachitfoodappbucket'
+    }
+
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Code') {
             steps {
-                echo 'Code checked out from GitHub'
+                git branch: 'main',
+                url: 'https://github.com/sachit-create/jenkins-pipeline-demo.git'
             }
         }
 
-        stage('Build') {
+        // =========================
+        // DEPLOY BACKEND
+        // =========================
+        stage('Deploy Backend to EC2') {
             steps {
-                sh 'echo Building application'
+                sshagent(['ec2-key']) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no ubuntu@${EC2_HOST} '
+                        cd ${PROJECT_ROOT} &&
+                        git pull origin main &&
+
+                        cd backend &&
+                        npm install &&
+
+                        pm2 delete foodapp || true &&
+                        pm2 start app.js --name foodapp &&
+                        pm2 save
+                    '
+                    """
+                }
             }
         }
 
-        stage('Test') {
+        // =========================
+        // BUILD FRONTEND
+        // =========================
+        stage('Install Frontend Dependencies') {
             steps {
-                sh 'echo Running tests'
+                dir('frontend') {
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'npm run build'
+                }
+            }
+        }
+
+        // =========================
+        // DEPLOY FRONTEND TO S3
+        // =========================
+        stage('Deploy Frontend to S3') {
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-s3-creds'
+                ]]) {
+                    sh '''
+                        aws s3 sync frontend/build/ s3://$S3_BUCKET --delete
+                    '''
+                }
             }
         }
     }
