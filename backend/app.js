@@ -8,21 +8,9 @@ const OrderData = require('./Routes/OrderData');
 const app = express();
 const port = 5000;
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://sachitfoodappbucket.s3-website.ap-south-1.amazonaws.com/"
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 }));
 
 app.options("*", cors()); // handle preflight
@@ -50,4 +38,5 @@ const startServer = async () => {
 };
 
 startServer();
+
 
