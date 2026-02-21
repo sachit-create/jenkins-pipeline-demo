@@ -13,7 +13,7 @@ const Login = () => {
     e.preventDefault();
     
     try {
-      const response = await fetch(`http://65.0.185.151:5000/api/login?timeout=${Date.now()}`, {
+      const response = await fetch(`http://13.201.1.179:5000/api/login?timeout=${Date.now()}`, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: { 'Content-Type': 'application/json' }
@@ -83,3 +83,4 @@ const Login = () => {
 };
 
 export default Login;
+
