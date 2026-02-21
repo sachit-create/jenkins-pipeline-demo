@@ -10,7 +10,7 @@ const port = 5000;
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "http://foodapp99.s3-website.ap-south-1.amazonaws.com"
+  "http://sachitfoodappbucket.s3-website.ap-south-1.amazonaws.com/"
 ];
 
 app.use(cors({
@@ -50,3 +50,4 @@ const startServer = async () => {
 };
 
 startServer();
+
