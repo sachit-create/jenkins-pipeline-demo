@@ -23,7 +23,7 @@ const SignUp = () => {
 
     try {
 
-      const response = await fetch(`http://65.0.185.151:5000/api/createUser?timeout=${Date.now()}`, {
+      const response = await fetch(`http://13.201.1.179:5000/api/createUser?timeout=${Date.now()}`, {
         method: 'POST',
         body: JSON.stringify(credentials),
         headers: { 'Content-Type': 'application/json' }
@@ -131,3 +131,4 @@ const SignUp = () => {
 };
 
 export default SignUp;
+
