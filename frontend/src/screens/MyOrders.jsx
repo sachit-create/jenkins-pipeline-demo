@@ -11,7 +11,7 @@ export default function MyOrder() {
         console.log('User email:', userEmail)
         
         try {
-            const response = await fetch("http://65.0.185.151:5000/api/myorderData", {
+            const response = await fetch("http://13.201.1.179:5000/api/myorderData", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -88,3 +88,4 @@ export default function MyOrder() {
         </div>
     )
 }
+
